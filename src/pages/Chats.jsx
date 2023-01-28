@@ -1,19 +1,28 @@
 import { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+import { getUser, REMOVE_ACTIVE_USER } from "../redux/slices/auth_slice";
 
 export default function Chats() {
   const [chats, setChats] = useState([]);
-  const server_url = import.meta.env.VITE_REACT_APP_SERVER_URL;
+  const user = useSelector(getUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const getChats = async () => {
-    const { data } = await axios.get(`${server_url}/api/chats`);
-    setChats(data);
+  console.log(user);
+
+  const remove = () => {
+    dispatch(REMOVE_ACTIVE_USER());
+    navigate("/");
   };
 
-  useEffect(() => {
-    getChats();
-  }, []);
-
-  return <div>Chats</div>;
+  return (
+    <div className="chats">
+      <h1>Chats</h1>
+      {user && <p>Hi, {user.username}</p>}
+      {user && <button onClick={remove}>Remove user</button>}
+    </div>
+  );
 }
